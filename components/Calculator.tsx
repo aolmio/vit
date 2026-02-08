@@ -101,7 +101,10 @@ const Calculator: React.FC<CalculatorProps> = ({ onSave }) => {
     onSave({
       weight: { ...weight },
       pricePerKyat: marketPrice,
-      totalPrice: details.totalAmount
+      totalPrice: details.totalAmount,
+      waste: { ...waste },
+      handmadeFee,
+      stoneFee
     });
     setView('form');
   };
