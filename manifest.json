@@ -1,9 +1,9 @@
-
 {
   "name": "GoldPro Myanmar",
   "short_name": "GoldPro",
   "description": "Professional Myanmar Gold Calculator & Purity Analysis",
-  "start_url": ".",
+  "start_url": "/vit/", 
+  "scope": "/vit/",
   "display": "standalone",
   "background_color": "#020617",
   "theme_color": "#020617",
