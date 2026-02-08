@@ -252,6 +252,24 @@ const App: React.FC = () => {
                               <span>အလေးချိန်:</span>
                               <span className="text-white font-mono">{item.weight.kyat}K {item.weight.pae}P {item.weight.yway}Y</span>
                             </div>
+                            {item.waste && (item.waste.kyat > 0 || item.waste.pae > 0 || item.waste.yway > 0) && (
+                              <div className="flex justify-between items-center py-1">
+                                <span>လျော့တွက်:</span>
+                                <span className="text-amber-500 font-mono">{item.waste.kyat}K {item.waste.pae}P {item.waste.yway}Y</span>
+                              </div>
+                            )}
+                            {item.stoneFee && item.stoneFee > 0 ? (
+                              <div className="flex justify-between items-center py-1">
+                                <span>ကျောက်ဖိုး:</span>
+                                <span className="text-white">{formatCurrency(item.stoneFee)}</span>
+                              </div>
+                            ) : null}
+                            {item.handmadeFee && item.handmadeFee > 0 ? (
+                              <div className="flex justify-between items-center py-1">
+                                <span>လက်ခ:</span>
+                                <span className="text-white">{formatCurrency(item.handmadeFee)}</span>
+                              </div>
+                            ) : null}
                             <div className="h-px bg-slate-800 my-2" />
                             <div className="flex justify-between items-center">
                               <span className="uppercase tracking-widest text-[10px] text-slate-500 font-black">စုစုပေါင်းသင့်ငွေ</span>
