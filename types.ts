@@ -19,6 +19,9 @@ export interface HistoryItem {
   weight: GoldWeight;
   pricePerKyat: number;
   totalPrice: number;
+  handmadeFee?: number;
+  stoneFee?: number;
+  waste?: GoldWeight;
 }
 
 export enum CalculationMode {
