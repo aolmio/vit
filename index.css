@@ -1,7 +1,0 @@
-/* Intentionally minimal: app styles are mostly utility classes generated at runtime via Tailwind CDN. */
-
-html,
-body,
-#root {
-  min-height: 100%;
-}
