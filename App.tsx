@@ -5,7 +5,6 @@ import NetWeightCalculator from './components/NetWeightCalculator';
 import PriceSystemConverter from './components/PriceSystemConverter';
 import GoldPurityAnalysis from './components/GoldPurityAnalysis';
 import DiamondCalculator from './components/DiamondCalculator';
-import GlobalPriceWidget from './components/GlobalPriceWidget';
 import AboutApp from './components/AboutApp';
 import { HistoryItem } from './types';
 import { formatCurrency } from './utils/goldMath';
