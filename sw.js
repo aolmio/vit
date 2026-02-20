@@ -1,66 +1,62 @@
-const CACHE_NAME = 'goldpro-v5';
+const CACHE_NAME = 'goldpro-v4'; // Incremented version
+const APP_PREFIX = '/vit/'; // Your GitHub repository name
 
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './index.css',
-  'https://cdn.tailwindcss.com'
+  'https://cdn.tailwindcss.com',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Myanmar:wght@300;400;500;600;700&display=swap'
 ];
 
+// Install: Cache all essential assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then((cache) => {
+      // We use relative paths in ASSETS which works with the SW location
+      return cache.addAll(ASSETS);
+    })
   );
-  self.skipWaiting();
+  self.skipWaiting(); // Force the waiting service worker to become active
 });
 
+// Activate: Clean up old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys
-      .filter((key) => key !== CACHE_NAME)
-      .map((key) => caches.delete(key))))
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+      );
+    })
   );
-  self.clients.claim();
+  return self.clients.claim(); // Take control of all open clients immediately
 });
 
+// Fetch: Strategy handler
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
+  const url = event.request.url;
 
-  const requestUrl = new URL(event.request.url);
-  const isSameOrigin = requestUrl.origin === self.location.origin;
-
-  if (isSameOrigin) {
+  // 1. External Gold Price API: Network First, then Cache Fallback
+  if (url.includes('goldprice.org')) {
     event.respondWith(
-      caches.match(event.request).then((cachedResponse) => {
-        if (cachedResponse) return cachedResponse;
-
-        return fetch(event.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const clonedResponse = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, clonedResponse);
-            });
-          }
-          return networkResponse;
-        });
-      })
+      fetch(event.request)
+        .then((response) => {
+          const clonedResponse = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, clonedResponse);
+          });
+          return response;
+        })
+        .catch(() => caches.match(event.request))
     );
     return;
   }
 
-  // For external resources (e.g., Tailwind CDN), prefer cache with network fallback.
+  // 2. General Assets: Cache First, then Network
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      return cachedResponse || fetch(event.request).then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200) {
-          const clonedResponse = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, clonedResponse);
-          });
-        }
-        return networkResponse;
-      });
+      return cachedResponse || fetch(event.request);
     })
   );
 });
